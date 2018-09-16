@@ -1,56 +1,19 @@
-
-# Função Triangular
-fT <- function (x, a, m, b) {
-  if (x >= a && x < m) {
-    return ( (x - a) / (m - a)  )
-  } else if (x >= m && x < b) {
-    return ( (b - x) / (b - m) )
-  } else {
-    return (0)
-  } 
-}
-
-aA <- 1
-mA <- 3.2
-bA <- 6
-
-aB <- 3
-mB <- 5.2
-bB <- 7.2
-
-x <- seq(0, 8, by = 0.08)
-
-calculaGrausDePertinencia <- function () {
-  grausA <- c()
-  grausB <- c()
-  
-  for (i in x ) {
-    grausA = c(grausA, fT(i, aA, mA, bA) )
-    grausB = c(grausB, fT(i, aB, mB, bB) )
-  }
-  
-  plot(x, grausA, type = "l", xlim = c(0.5, 7.5), ylim = c(0.039, 1), ylab = "", xlab = "")
-  lines(x, grausB)
-}
-
 # Função para calcular a INTERSEÇÃO do conjunto A e B
-calculaIntersecaoAxB <- function () {
+calculaIntersecaoAxB <- function (x, aA, mA, bA, aB, mB, bB) {
   intersecaoAB <- c()
   for (i in x) {
     intersecaoAB <- c( intersecaoAB, min(fT(i, aA, mA, bA),  fT(i, aB, mB, bB)) )
   }
-  
-  # plot(x, intersecaoAB, type = "l", xlim = c(0.5, 7.5), ylim = c(0.039, 1), ylab = "", xlab = "Interseção AxB")
+  return (intersecaoAB)
 }
 
 # Função para calcular a UNIÃO do conjunto A e B
-calculaUniaoAxB <- function () {
+calculaUniaoAxB <- function (x, aA, mA, bA, aB, mB, bB) {
   uniaoAB <- c()
   for (i in x) {
     uniaoAB <- c( uniaoAB, max(fT(i, aA, mA, bA),  fT(i, aB, mB, bB)) )
   }
-  
-  # plot(x, uniaoAB, type = "l", xlim = c(0.5, 7.5), ylim = c(0.039, 1), ylab = "", xlab = "União AxB")
+  return (uniaoAB)
 }
 
 # Função para calcular o complemento de um certo conjunto fuzzy
@@ -132,19 +95,3 @@ calculaUniaoDrasticaAB <- function () {
 mediaAritmetica <- function (fuzzySet) {
   return( mean(fuzzySet) )
 }
-
-# Chama funções
-calculaGrausDePertinencia()
-calculaIntersecaoAxB()
-calculaUniaoAxB()
-# complemento(grausA)
-# complemento(grausB)
-calculaProdutoAB()
-CalculaLukasiewiczAB()
-calculaIntersecaoDrasticaAB()
-calculaSomaAlgebricaAxB()
-calculaSomaLimitadaAxB()
-calculaUniaoDrasticaAB()
-
-# cat("Média aritmética de A: ", mediaAritmetica(grausA), "\n" )
-# cat("Média aritmética de B: ", mediaAritmetica(grausB), "\n" )
