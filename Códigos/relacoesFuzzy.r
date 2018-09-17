@@ -34,6 +34,5 @@ for(i in c(1:length(temp))) {
     # cat("Fuzzy Set B: ", unlist(umid[j]), "\n")
     # cat("Uniao: ", uniaoRelacao, "\n")
   }
-  cat("Uniao: ", uniaoRelacao, "\n\n")
   plot(c(0:(length(uniaoRelacao) - 1)), uniaoRelacao, type = "l", xlim = c(min(uniaoRelacao), length(uniaoRelacao)), ylim = c(0.039, 1), ylab = "", xlab = "Uniao AxB")
 }
