@@ -19,8 +19,32 @@ termoUmidMedia <- seq(20, 30)
 temp <- list(termoTempBaixa, termoTempMedia, termoTempAlta)
 umid <- list(termoUmidMuitoBaixa, termoUmidBaixa, termoUmidMedia)
 
+# ==========================================================
+# União de Relações
+# 
+# for(i in c(1:length(temp))) {
+#   uniaoRelacao <- c()
+#   x <- unlist(temp[i])
+#   aA <- min(unlist(temp[i]))
+#   mA <- (min(unlist(temp[i])) + max(unlist(temp[i])) ) / 2
+#   bA <- max(unlist(temp[i]))
+#   for(j in c(1:length(umid))) {
+#     aB <- min(unlist(umid[j]))
+#     mB <- ( min(unlist(umid[j])) + max(unlist(umid[j])) ) / 2
+#     bB <- max(unlist(umid[j]))
+#     uniaoRelacao <- c( uniaoRelacao, calculaUniaoAxB(x, aA, mA, bA, aB, mB, bB) )
+#     # cat("Fuzzy Set A: ", unlist(temp[i]), "\n")
+#     # cat("Fuzzy Set B: ", unlist(umid[j]), "\n")
+#     # cat("Uniao: ", uniaoRelacao, "\n")
+#   }
+#   plot(c(0:(length(uniaoRelacao) - 1)), uniaoRelacao, type = "l", xlim = c(min(uniaoRelacao), length(uniaoRelacao)), ylim = c(0.039, 1), ylab = "", xlab = "União AxB")
+# }
+
+# ==========================================================
+# Interseção de relações
+
 for(i in c(1:length(temp))) {
-  uniaoRelacao <- c()
+  intersecaoRelacao <- c()
   x <- unlist(temp[i])
   aA <- min(unlist(temp[i]))
   mA <- (min(unlist(temp[i])) + max(unlist(temp[i])) ) / 2
@@ -29,10 +53,12 @@ for(i in c(1:length(temp))) {
     aB <- min(unlist(umid[j]))
     mB <- ( min(unlist(umid[j])) + max(unlist(umid[j])) ) / 2
     bB <- max(unlist(umid[j]))
-    uniaoRelacao <- c( uniaoRelacao, calculaUniaoAxB(x, aA, mA, bA, aB, mB, bB) )
+    intersecaoRelacao <- c( intersecaoRelacao, calculaIntersecaoAxB(x, aA, mA, bA, aB, mB, bB) )
     # cat("Fuzzy Set A: ", unlist(temp[i]), "\n")
     # cat("Fuzzy Set B: ", unlist(umid[j]), "\n")
-    # cat("Uniao: ", uniaoRelacao, "\n")
+    # cat("Uniao: ", intersecaoRelacao, "\n")
   }
-  plot(c(0:(length(uniaoRelacao) - 1)), uniaoRelacao, type = "l", xlim = c(min(uniaoRelacao), length(uniaoRelacao)), ylim = c(0.039, 1), ylab = "", xlab = "Uniao AxB")
+  plot(c(0:(length(intersecaoRelacao) - 1)), intersecaoRelacao, type = "l", 
+  	xlim = c(min(intersecaoRelacao), length(intersecaoRelacao)), ylim = c(0.039, 1), 
+  	ylab = "", xlab = "Interseção AxB")
 }
