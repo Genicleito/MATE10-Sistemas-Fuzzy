@@ -23,6 +23,8 @@ preProcessar <- function() {
 # Função para definir intervalos dos atributos da base de dados
 # TODO
 defineIntervalos <- function() {
-  
+  for(i in c(1 : ncol(db))) {
+    cat("Interval of ", colnames(db)[i], ": [", min(db[ , i]), ", ", max(db[ , i]), "]\n")
+  }
 }
 
