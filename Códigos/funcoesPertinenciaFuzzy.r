@@ -1,10 +1,26 @@
-# Fun√ß√£o Triangular
-fT <- function (x, a, m, b) {
+# FunÁ„o Triangular
+fuzzy_triangular <- function (x, a, m, b) {
   if (x >= a && x < m) {
     return ( (x - a) / (m - a)  )
-  } else if (x >= m && x < b) {
+  }
+  if (x >= m && x < b) {
     return ( (b - x) / (b - m) )
-  } else {
-    return (0)
-  } 
+  }
+  return (0)
+}
+
+# FunÁ„o trapezoidal
+fuzzy_trapezoidal <- function(x, a, m, n, b) {
+  if (x < a || x >= b) {
+    return(0)
+  }
+  if (x >= a & x < m) {
+    return((x - a) / (m - a))
+  }
+  if (x >= m & x < n) {
+    return(1)
+  }
+  if (x >= n & x < b) {
+    return((b - x) / (b - n))
+  }
 }
