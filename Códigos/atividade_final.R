@@ -48,14 +48,14 @@ for (i in seq(0, 101, 1)) {
 }
 plot(conjunto_aumentando, resultado_conjunto_aumentando, type = "l")
 
-# Servicos alta [Serviços]
+# Servicos Media [Serviços]
 resultado_conjunto_media <- c()
-conjunto_media <- seq(50, 100, 1)
+conjunto_media <- seq(0, 100, 1)
 for (i in conjunto_media) {
   resultado_conjunto_media <- c(resultado_conjunto_media,
                                   triangular(i, 0, 50, 100))
 }
-plot(conjunto_alta, resultado_conjunto_alta, type = "l")
+plot(conjunto_media, resultado_conjunto_media, type = "l")
 
 # Servicos alta [Serviços]
 resultado_conjunto_alta <- c()
@@ -66,6 +66,15 @@ for (i in conjunto_alta) {
 }
 plot(conjunto_alta, resultado_conjunto_alta, type = "l")
 
+# Servicos baixa [Serviços]
+resultado_conjunto_baixa <- c()
+conjunto_baixa <- seq(0, 100, 1)
+for (i in conjunto_baixa) {
+  resultado_conjunto_baixa <- c(resultado_conjunto_baixa,
+                               triangular(i, 0, 0, 50))
+}
+plot(conjunto_baixa, resultado_conjunto_baixa, type = "l")
+
 # Informatizacao bom [Informatizacao]
 resultado_conjunto_bom <- c()
 conjunto_bom <- seq(50, 100, 1)
@@ -74,6 +83,15 @@ for (i in conjunto_bom) {
                                triangular(i, 50, 100, 100))
 }
 plot(conjunto_bom, resultado_conjunto_bom, type = "l")
+
+# Informatizacao ruim [Informatizacao]
+resultado_conjunto_ruim <- c()
+conjunto_ruim <- seq(0, 100, 1)
+for (i in conjunto_ruim) {
+  resultado_conjunto_ruim <- c(resultado_conjunto_ruim,
+                              triangular(i, 0, 0, 50))
+}
+plot(conjunto_ruim, resultado_conjunto_ruim, type = "l")
 
 # PRIMEIRA REGRA
 # V aumentando
@@ -167,13 +185,34 @@ for(i in seq(0, 100)) {
 }
 
 regra_2 <- c()
-vetorValoresMaximos <- c()   # FAzer isso para a agregação, aqui não é preciso
+vetorValoresMaximos <- c()   # Fazer isso para a agregação, aqui não é preciso
 for(i in seq(0, 100)) {
-  minimo <- min(trapezoidal(i, 0, 50, 100, 100), triangular(i, 0, 50, 100), triangular(i, 50, 100, 100))
-  if(minimo <= 0.7)
+  # minimo <- min(trapezoidal(i, 0, 50, 100, 100), triangular(i, 0, 50, 100), triangular(i, 50, 100, 100))
+  minimo <- triangular(i, 0, 50, 100)
+  if(minimo <= r2)
     regra_2 <- c(regra_2, minimo)
   else
-    regra_2 <- c(regra_2, 0.7)
+    regra_2 <- c(regra_2, r2)
+}
+
+regra_3 <- c()
+vetorValoresMaximos <- c()   # FAzer isso para a agregação, aqui não é preciso
+for(i in seq(0, 100)) {
+  minimo <- triangular(i, 0, 0, 50)
+  if(minimo <= r3)
+    regra_3 <- c(regra_3, minimo)
+  else
+    regra_3 <- c(regra_3, r3)
+}
+
+regra_4 <- c()
+vetorValoresMaximos <- c()   # FAzer isso para a agregação, aqui não é preciso
+for(i in seq(0, 100)) {
+  minimo <- triangular(i, 50, 100, 100)
+  if(minimo <= r4)
+    regra_4 <- c(regra_4, minimo)
+  else
+    regra_4 <- c(regra_4, r4)
 }
 
 resultado <- c()
@@ -189,7 +228,7 @@ for(i in seq(0, 100)) {
 # TODO: regra_3 e regra_4 dão 0, fazer depois
 
 plot (seq(0,100, 1), resultado_conjunto_aumentando, xlim = c(0,100), type = "l", col = "red")
-lines(seq(50,100, 1), resultado_conjunto_media, col = "blue")
+lines(seq(0,100, 1), resultado_conjunto_media, col = "blue")
 lines(seq(50,100, 1), resultado_conjunto_bom, col = "green")
 lines(seq(0,100,1), regra_1, col = "orange")
 
@@ -217,7 +256,7 @@ for(i in seq(0, 100)) {
   if(grauR2 > 0.7)
     grauR2 = 0.7
   
-  cat("Grau1: ", grauR1, "\n")
+  # cat("Grau1: ", grauR1, "\n")
   
   maximo <- max(
     grauR1, grauR2
@@ -229,3 +268,26 @@ for(i in seq(0, 100)) {
 }
 
 plot(seq(0, 100), resultado, type = "l", col = "orange", xlim = c(0,100))
+
+valorDefuzzificadoSumMax = (vetorValoresMaximos[1] + vetorValoresMaximos[ length(vetorValoresMaximos) ]) / 2
+# = (35 + 65) / 2
+
+valorDefuzzificadoCoA_numerador = 0
+for(i in seq(1: length(resultado))) {
+  valorDefuzzificadoCoA_numerador <- resultado[i] * i + valorDefuzzificadoCoA_numerador
+}
+valorDefuzzificadoCoA <- 0
+for(i in seq(1: length(resultado))) {
+  valorDefuzzificadoCoA <- resultado[i] + valorDefuzzificadoCoA
+}
+
+# TODO usar sapply(list, function)
+
+valorDefuzzificadoCoA <- valorDefuzzificadoCoA_numerador / valorDefuzzificadoCoA
+valorDefuzzificadoCoA
+
+# Com Larsen
+# r1: 0.14
+# r2: 0.56
+# r3: 0
+# r4: 0
