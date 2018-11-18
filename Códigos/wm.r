@@ -48,11 +48,21 @@ defineIntervalos <- function(db) {
 # db é a base com os intervalos de cada variavel
 defineRegioesFuzzy <- function(db, nRegions) {
   regions <- c()
-  nRows <- length( seq( min(db[ , 0]), max(db[ , 0]), (( (max(db[ , 0]) - min(db[ , 0]) ) / nRegions) / 2 ) ) )
+  nRows <- length( seq( min(db[ , 1]), max(db[ , 1]), (( (max(db[ , 1]) - min(db[ , 1]) ) / (nRegions - 1)) ) ) )
   for(i in c(1 : ncol(db))) {
-    regions <- c( regions, seq( min(db[ , i]), max(db[ , i]), (( (max(db[ , i]) - min(db[ , i]) ) / nRegions) / 2 ) ) )
+    minimo <- min(db[ , i])
+    maximo <- max(db[ , i])
+    tamIntervalos <- ( max(db[ , i]) - min(db[ , i]) )
+    if(minimo == maximo) {
+      regions <- c(regions, (rep(minimo, nRows)))
+    } else {
+      regions <- c( regions, seq( minimo, maximo, ( tamIntervalos / (nRegions - 1) ) ) )
+    }
+    # cat("Regions of ", names(db)[i], ":", regions, "\n\n")
   }
-  return (data.frame(matrix(data = regions, nrow = nRows)))
+  result <- data.frame(matrix(data = regions, nrow = nRows))
+  colnames(result) <- names(db)
+  return(result)
 }
 
 # Chamada de funções
