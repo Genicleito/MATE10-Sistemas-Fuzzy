@@ -64,9 +64,29 @@ defineRegioesFuzzy <- function(db, nRegions) {
   colnames(result) <- names(db)
   return(result)
 }
+# Continuar...
+# Fazer um metodo para iterar sobre todos os elementos do data.train
+generateFuzzyRules <- function(elem, fuzzyRegions) {
+  result <- c()
+  for(i in seq(1, nrow(fuzzyRegions))) {
+    if(i == 1) {
+      grau <- fuzzy_triangular(elem, fuzzyRegions[i, 1], fuzzyRegions[i, 1], fuzzyRegions[i + 1, 1])
+      result <- c( result,  grau)
+    } else if( i == nrow(fuzzyRegions) ) {
+      result <- c(result, fuzzy_triangular(elem, fuzzyRegions[i - 1, 1], fuzzyRegions[i, 1], fuzzyRegions[i, 1]))
+    } else {
+      result <- c(result, fuzzy_triangular(elem, fuzzyRegions[i - 1, 1], fuzzyRegions[i, 1], fuzzyRegions[i + 1, 1]))
+    }
+  }
+  return(max(result))
+}
+
+nRegions <- 3
 
 # Chamada de funções
 data <- preProcessar(data)
 data.test <- defineTestSet(data)
 data.train <- defineTrainSet(data)
 intervalos <- defineIntervalos(data.train)
+fuzzyRegions <- defineRegioesFuzzy(intervalos, nRegions)
+
