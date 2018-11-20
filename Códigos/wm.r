@@ -1,3 +1,5 @@
+source('funcoesPertinenciaFuzzy.r')
+
 # Implementação do Wang&Mendel como descrito no artigo
 
 # # Lê a base de dados
@@ -7,6 +9,15 @@
 # data <- data[, -1]
 
 data <- iris
+
+
+regions <- c("Extremamente Baixa", "Baixissima", "Muito Baixa", "Baixa", "Um Pouco Baixa",
+             "Normal",
+             "Media", "Alta", "Muito Alta", "Altissima", "Extremamente Alta")
+
+nRegions <- 3
+
+idInicioRegioes <- (length(regions) - nRegions) / 2
 
 # Função para pre-processar a base de dados em questão
 preProcessar <- function(db) {
@@ -66,22 +77,30 @@ defineRegioesFuzzy <- function(db, nRegions) {
 }
 # Continuar...
 # Fazer um metodo para iterar sobre todos os elementos do data.train
-generateFuzzyRules <- function(elem, fuzzyRegions) {
+# @param fuzzyRegionsXi - Regiões Fuzzy da variável Xi
+generateFuzzyRules <- function(elem, fuzzyRegionsXi) {
   result <- c()
-  for(i in seq(1, nrow(fuzzyRegions))) {
+  for( i in seq(1, length(fuzzyRegionsXi)) ) {
+    # cat("i = ", i, "\n")
     if(i == 1) {
-      grau <- fuzzy_triangular(elem, fuzzyRegions[i, 1], fuzzyRegions[i, 1], fuzzyRegions[i + 1, 1])
-      result <- c( result,  grau)
-    } else if( i == nrow(fuzzyRegions) ) {
-      result <- c(result, fuzzy_triangular(elem, fuzzyRegions[i - 1, 1], fuzzyRegions[i, 1], fuzzyRegions[i, 1]))
+      grau <- fuzzy_triangular(elem, fuzzyRegionsXi[i], fuzzyRegionsXi[i], fuzzyRegionsXi[i + 1])
+      result <- c( result, grau )
+    } else if( i == length(fuzzyRegionsXi) ) {
+      result <- c(result, fuzzy_triangular(elem, fuzzyRegionsXi[i - 1], fuzzyRegionsXi[i], fuzzyRegionsXi[i]))
     } else {
-      result <- c(result, fuzzy_triangular(elem, fuzzyRegions[i - 1, 1], fuzzyRegions[i, 1], fuzzyRegions[i + 1, 1]))
+      result <- c(result, fuzzy_triangular(elem, fuzzyRegionsXi[i - 1], fuzzyRegionsXi[i], fuzzyRegionsXi[i + 1]))
     }
   }
-  return(max(result))
+  # cat("\n [", elem, "]", ": Result: ", result, "\n")
+  
+  # # 1a forma
+  # # Retorna o grau máximo de cada instancia do dataset
+  # return( max(result) )
+  
+  # 2a forma
+  # Retorna o grau máximo e a região correspondente a este grau.
+  return( c(max(result), regions[idInicioRegioes + which(result == max(result))[1]]) )
 }
-
-nRegions <- 3
 
 # Chamada de funções
 data <- preProcessar(data)
@@ -90,3 +109,24 @@ data.train <- defineTrainSet(data)
 intervalos <- defineIntervalos(data.train)
 fuzzyRegions <- defineRegioesFuzzy(intervalos, nRegions)
 
+# Define a matriz que contém os graus de todas as intâncias das variáveis
+grausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train)) )
+colnames(grausMaximosVariaveis) = names(data)
+
+# Define uma matriz com as regiões correspondente a cada grau máximo obtido por cada elemento do dataset
+regioesGrausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train)) )
+colnames(regioesGrausMaximosVariaveis) = names(data)
+
+# # 1a forma: Função Inicial usando lapply
+# for(i in seq(1, ncol(data.train)) ) {
+  # grausMaximosVariaveis[ ,i] = unlist(lapply(data.train[ , i], generateFuzzyRules, fuzzyRegions[, i]))
+# }
+
+# # 2a forma
+for( i in seq(1, ncol(data.train)) ) {
+  for( j in seq(1, nrow(data.train)) ) {
+    retorno <- generateFuzzyRules( data.train[j , i],  fuzzyRegions[, i] )
+    grausMaximosVariaveis[j, i] = as.numeric(retorno[1])
+    regioesGrausMaximosVariaveis[j, i] = retorno[2]
+  }
+}
