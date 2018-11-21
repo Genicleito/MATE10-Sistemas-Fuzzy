@@ -110,8 +110,8 @@ intervalos <- defineIntervalos(data.train)
 fuzzyRegions <- defineRegioesFuzzy(intervalos, nRegions)
 
 # Define a matriz que contém os graus de todas as intâncias das variáveis
-grausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train)) )
-colnames(grausMaximosVariaveis) = names(data)
+grausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train) + 1) )
+colnames(grausMaximosVariaveis) = c(names(data), "Degree.Rule")
 
 # Define uma matriz com as regiões correspondente a cada grau máximo obtido por cada elemento do dataset
 regioesGrausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train)) )
@@ -130,3 +130,6 @@ for( i in seq(1, ncol(data.train)) ) {
     regioesGrausMaximosVariaveis[j, i] = retorno[2]
   }
 }
+
+# Determina o grau de cada regra e o armazena na coluna Degree.Rule do data.frame
+grausMaximosVariaveis[ , 6] = apply(grausMaximosVariaveis[ , c(-6)], 1, prod)
