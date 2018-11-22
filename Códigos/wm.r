@@ -11,13 +11,18 @@ source('funcoesPertinenciaFuzzy.r')
 data <- iris
 
 
-regions <- c("Extremamente Baixa", "Baixissima", "Muito Baixa", "Baixa", "Um Pouco Baixa",
-             "Normal",
-             "Media", "Alta", "Muito Alta", "Altissima", "Extremamente Alta")
+# regions <- c("Extremamente Baixa", "Baixissima", "Muito Baixa", "Baixa", "Um Pouco Baixa",
+#              "Normal",
+#              "Media", "Alta", "Muito Alta", "Altissima", "Extremamente Alta")
+
+regions <- c("Extremamente.Baixa", "Baixissima", "Muito.Baixa", "Baixa",
+             "Media",
+             "Alta", "Muito.Alta", "Altissima", "Extremamente.Alta")
 
 nRegions <- 3
 
-idInicioRegioes <- (length(regions) - nRegions) / 2
+# idInicioRegioes <- (length(regions) - nRegions) / 2
+idInicioRegioes <- (length(regions) / 2) - 1
 
 # Função para pre-processar a base de dados em questão
 preProcessar <- function(db) {
@@ -99,7 +104,8 @@ generateFuzzyRules <- function(elem, fuzzyRegionsXi) {
   
   # 2a forma
   # Retorna o grau máximo e a região correspondente a este grau.
-  return( c(max(result), regions[idInicioRegioes + which(result == max(result))[1]]) )
+  # return( c(max(result), regions[idInicioRegioes + which(result == max(result))[1]]) )
+  return( c(max(result), regions[ idInicioRegioes + which( result == max(result) )[1] ]) )
 }
 
 # Chamada de funções
@@ -133,3 +139,18 @@ for( i in seq(1, ncol(data.train)) ) {
 
 # Determina o grau de cada regra e o armazena na coluna Degree.Rule do data.frame
 grausMaximosVariaveis[ , 6] = apply(grausMaximosVariaveis[ , c(-6)], 1, prod)
+
+# Cria strings que representam as regras
+for(linha in seq(1, nrow(regioesGrausMaximosVariaveis))) {
+  regra <- c("IF ")
+  for( coluna in seq( 1, ncol(regioesGrausMaximosVariaveis) ) ) {
+    if(coluna == ncol(regioesGrausMaximosVariaveis)) {
+      regra <- c( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], "\n\n" )
+    } else if( coluna == ncol(regioesGrausMaximosVariaveis) - 1 ) {
+      regra <- c( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], " THEN " )
+    } else {
+      regra <- c( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], " AND " )
+    }
+  }
+  cat(regra)
+}

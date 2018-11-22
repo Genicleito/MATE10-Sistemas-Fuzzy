@@ -1,5 +1,8 @@
 # Função Triangular
 fuzzy_triangular <- function (x, a, m, b) {
+  if (x == m) {
+    return (1)
+  }
   if (x >= a && x < m) {
     return ( (x - a) / (m - a)  )
   }
