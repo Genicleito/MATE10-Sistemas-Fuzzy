@@ -123,6 +123,9 @@ colnames(grausMaximosVariaveis) = c(names(data), "Degree.Rule")
 regioesGrausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train)) )
 colnames(regioesGrausMaximosVariaveis) = names(data)
 
+# Define a base de regras
+rules.data <- c()
+
 # # 1a forma: Função Inicial usando lapply
 # for(i in seq(1, ncol(data.train)) ) {
   # grausMaximosVariaveis[ ,i] = unlist(lapply(data.train[ , i], generateFuzzyRules, fuzzyRegions[, i]))
@@ -142,15 +145,17 @@ grausMaximosVariaveis[ , 6] = apply(grausMaximosVariaveis[ , c(-6)], 1, prod)
 
 # Cria strings que representam as regras
 for(linha in seq(1, nrow(regioesGrausMaximosVariaveis))) {
-  regra <- c("IF ")
+  regra <- paste("IF ")
   for( coluna in seq( 1, ncol(regioesGrausMaximosVariaveis) ) ) {
     if(coluna == ncol(regioesGrausMaximosVariaveis)) {
-      regra <- c( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], "\n\n" )
+      # regra <- paste( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], "\n\n" )
+      regra <- paste( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna] )
     } else if( coluna == ncol(regioesGrausMaximosVariaveis) - 1 ) {
-      regra <- c( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], " THEN " )
+      regra <- paste( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], " THEN " )
     } else {
-      regra <- c( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], " AND " )
+      regra <- paste( regra, names(data)[coluna], " IS ", regioesGrausMaximosVariaveis[linha, coluna], " AND " )
     }
   }
-  cat(regra)
+  # cat(regra)
+  rules.data <- c(rules.data, regra)
 }
