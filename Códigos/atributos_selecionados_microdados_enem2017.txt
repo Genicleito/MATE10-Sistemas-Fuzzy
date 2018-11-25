@@ -1,0 +1,22 @@
+Atributos selecionados:
+NO_MUNICIPIO_RESIDENCIA: Nome do município de residência
+NU_IDADE: Idade
+TP_SEXO: Sexo
+TP_COR_RACA: Cor/raça
+TP_ESCOLA: Tipo de escola do Ensino Médio
+* (remover deficientes?)
+* Excluir inscritos ausentes
+Q006: Qual é a renda mensal de sua família? (Some a sua renda com a dos seus familiares.)
+Q027: Em que tipo de escola você frequentou o Ensino Médio?
+? NU_NOTA_COMP1: Nota da competência 1 - Demonstrar domínio da modalidade escrita formal da Língua Portuguesa.
+? NU_NOTA_COMP2: Nota da competência 2 - Compreender a proposta de redação e aplicar conceitos das várias áreas de conhecimento para desenvolver o tema, dentro dos limites estruturais do texto dissertativo-argumentativo em prosa.
+? NU_NOTA_COMP3: Nota da competência 3 - Selecionar, relacionar, organizar e interpretar informações, fatos, opiniões e argumentos em defesa de um ponto de vista.
+? NU_NOTA_COMP4: Nota da competência 4 - Demonstrar conhecimento dos mecanismos linguísticos necessários para a construção da argumentação.
+? NU_NOTA_COMP5: Nota da competência 5 - Elaborar proposta de intervenção para o problema abordado, respeitando os direitos humanos.
+NU_NOTA_REDACAO: Nota da prova de redação
+NU_NOTA_CN: Nota da prova de Ciências da Natureza
+NU_NOTA_CH: Nota da prova de Ciências Humanas
+NU_NOTA_LC: Nota da prova de Linguagens e Códigos
+NU_NOTA_MT: Nota da prova de Matemática
+
+TP_STATUS_REDACAO: Situação da redação do participante

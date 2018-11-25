@@ -1,0 +1,1 @@
+split --bytes=60M ./MICRODADOS_ENEM_2017.csv dados/partes
