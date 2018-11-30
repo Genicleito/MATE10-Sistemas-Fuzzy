@@ -1,4 +1,4 @@
-# As notas nas competencias podem nao ser interessantes pois elas já dão uma noção da nota final da redação
+# As notas nas competencias podem nao ser interessantes pois elas j? d?o uma no??o da nota final da reda??o
 competencias.redacao <- c("NU_NOTA_COMP1", "NU_NOTA_COMP2", "NU_NOTA_COMP3", "NU_NOTA_COMP4", "NU_NOTA_COMP5")
 
 ###############################################################################
@@ -21,7 +21,7 @@ files.names <- paste("a", letters[seq(2, 26)], sep = "")
 dataset.atributos.relevantes <- enem2017
 #colnames(dataset.atributos.relevantes) <- atributos.selecionados
 
-for(file.name in files.names[c(1)]) {
+for(file.name in files.names) {
   cat("Lendo arquivo...", file.name, "\n")
   file <- read.csv(file.name, header = FALSE, sep = ";")
   cat("Terminou de ler o arquivo", file.name, "\n")
@@ -35,10 +35,6 @@ for(file.name in files.names[c(1)]) {
   # dataset.atributos.relevantes[, atributos.selecionados] = file[, atributos.selecionados]
 }
 
-a <- matrix(nrow = 2, ncol = 2)
-a[1, ] = c(11, 12)
-a[2, ] = c(21, 22)
+# Validar o cÃ³digo e descomentar este trecho
+# write.csv(dataset.atributos.relevantes, file = "base-enem-pre-processada.csv", row.names = FALSE, col.names = TRUE, sep = ";")
 
-b <- matrix(nrow = 2, ncol = 2)
-b[1, ] = c(-11, -12)
-b[2, ] = c(-21, -22)
