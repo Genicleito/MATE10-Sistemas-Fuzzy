@@ -3,7 +3,8 @@ competencias.redacao <- c("NU_NOTA_COMP1", "NU_NOTA_COMP2", "NU_NOTA_COMP3", "NU
 
 ###############################################################################
 
-enem2017 <- read.csv("aa.csv", header = TRUE, sep = ";")
+# enem2017 <- read.csv("aa.csv", header = TRUE, sep = ";")
+enem2017 <- read.csv("aa", header = TRUE, sep = ";")
 
 # Nomes das colunas
 atributos.dataset <- colnames(enem2017)
