@@ -11,11 +11,11 @@ linhasComNA <- function(dataSet) {
       }
     }
   }
-  cat("Lista de NAs construída.\n")
+  cat("Lista de NAs construÃ­da.\n")
   return(linhasRemovidas)
 }
 
-# dados.atributos.relevantes <- read.csv(file = "base-enem-pre-processada.csv", header = TRUE, sep = ",")
-
-# dados.sem.na <- dados.atributos.relevantes[-removerLinhasComNA(dados.atributos.relevantes), ]
-# dados.sem.na
+# Normaliza os dados entre [0, 1]
+normalizarDados <- function(dadosSemNA) {
+  return( ( dadosSemNA - min(dadosSemNA) ) / ( max(dadosSemNA) - min(dadosSemNA) ) )
+}

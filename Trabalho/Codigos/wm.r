@@ -1,11 +1,11 @@
 source('funcoesPertinenciaFuzzy.r')
 
-# Implementação do Wang&Mendel como descrito no artigo
+# ImplementaÃ§Ã£o do Wang&Mendel como descrito no artigo
 
-# # Lê a base de dados
-# data <- read.csv('./GitHub/sistemasFuzzy/Códigos/jogarTenis.csv', sep = ',')
+# # LÃª a base de dados
+# data <- read.csv('./GitHub/sistemasFuzzy/Codigos/jogarTenis.csv', sep = ',')
 
-# # A coluna 1 é um identificador do dia
+# # A coluna 1 Ã© um identificador do dia
 # data <- data[, -1]
 
 data <- iris
@@ -24,9 +24,9 @@ nRegions <- 3
 # idInicioRegioes <- (length(regions) - nRegions) / 2
 idInicioRegioes <- (length(regions) / 2) - 1
 
-# Função para pre-processar a base de dados em questão
+# Funï¿½ï¿½o para pre-processar a base de dados em questÃ£o
 preProcessar <- function(db) {
-  # Converte os dados em numéricos
+  # Converte os dados em numï¿½ricos
   for(i in c(1: ncol(db))){
     db[i] = as.numeric( unlist(db[i]) )
   }
@@ -35,17 +35,17 @@ preProcessar <- function(db) {
 }
 
 defineTrainSet <- function(db) {
-  # Coleta dados de forma aleatória para ser o conjunto de treinamento (1/3 da base)
+  # Coleta dados de forma aleatÃ³ria para ser o conjunto de treinamento (1/3 da base)
   return (db[ (1 : ( nrow(db) * 1 / 3 )), ])
   
 }
 
 defineTestSet <- function(db) {
-  # Coleta dados de forma aleatória para ser o conjunto de teste (2/3 da base)
+  # Coleta dados de forma aleatÃ³ria para ser o conjunto de teste (2/3 da base)
   return(db[ (nrow(db) * 1 / 3) : ( nrow(db) ), ])
 }
 
-# Função para definir intervalos dos atributos da base de dados
+# FunÃ§Ã£o para definir intervalos dos atributos da base de dados
 # TODO
 defineIntervalos <- function(db) {
   range <- c()
@@ -61,7 +61,7 @@ defineIntervalos <- function(db) {
 }
 
 
-# db é a base com os intervalos de cada variavel
+# db Ã© a base com os intervalos de cada variavel
 defineRegioesFuzzy <- function(db, nRegions) {
   regions <- c()
   nRows <- length( seq( min(db[ , 1]), max(db[ , 1]), (( (max(db[ , 1]) - min(db[ , 1]) ) / (nRegions - 1)) ) ) )
@@ -82,7 +82,7 @@ defineRegioesFuzzy <- function(db, nRegions) {
 }
 # Continuar...
 # Fazer um metodo para iterar sobre todos os elementos do data.train
-# @param fuzzyRegionsXi - Regiões Fuzzy da variável Xi
+# @param fuzzyRegionsXi - Regi~Ãµes Fuzzy da variÃ¡vel Xi
 generateFuzzyRules <- function(elem, fuzzyRegionsXi) {
   result <- c()
   for( i in seq(1, length(fuzzyRegionsXi)) ) {
@@ -99,34 +99,34 @@ generateFuzzyRules <- function(elem, fuzzyRegionsXi) {
   # cat("\n [", elem, "]", ": Result: ", result, "\n")
   
   # # 1a forma
-  # # Retorna o grau máximo de cada instancia do dataset
+  # # Retorna o grau mÃ¡ximo de cada instancia do dataset
   # return( max(result) )
   
   # 2a forma
-  # Retorna o grau máximo e a região correspondente a este grau.
+  # Retorna o grau mÃ¡ximo e a regiÃ£o correspondente a este grau.
   # return( c(max(result), regions[idInicioRegioes + which(result == max(result))[1]]) )
   return( c(max(result), regions[ idInicioRegioes + which( result == max(result) )[1] ]) )
 }
 
-# Chamada de funções
+# Chamada de funÃ§Ãµes
 data <- preProcessar(data)
 data.test <- defineTestSet(data)
 data.train <- defineTrainSet(data)
 intervalos <- defineIntervalos(data.train)
 fuzzyRegions <- defineRegioesFuzzy(intervalos, nRegions)
 
-# Define a matriz que contém os graus de todas as intâncias das variáveis
+# Define a matriz que contÃ©m os graus de todas as intÃ¢ncias das variÃ¡veis
 grausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train) + 1) )
 colnames(grausMaximosVariaveis) = c(names(data), "Degree.Rule")
 
-# Define uma matriz com as regiões correspondente a cada grau máximo obtido por cada elemento do dataset
+# Define uma matriz com as regiÃµes correspondente a cada grau mÃ¡ximo obtido por cada elemento do dataset
 regioesGrausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train)) )
 colnames(regioesGrausMaximosVariaveis) = names(data)
 
 # Define a base de regras
 rules.data <- c()
 
-# # 1a forma: Função Inicial usando lapply
+# # 1a forma: FunÃ§Ã£o Inicial usando lapply
 # for(i in seq(1, ncol(data.train)) ) {
   # grausMaximosVariaveis[ ,i] = unlist(lapply(data.train[ , i], generateFuzzyRules, fuzzyRegions[, i]))
 # }
