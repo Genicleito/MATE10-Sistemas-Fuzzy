@@ -1,5 +1,5 @@
 Atributos selecionados:
-NO_MUNICIPIO_RESIDENCIA: Nome do município de residência
+? NO_MUNICIPIO_RESIDENCIA: Nome do município de residência
 NU_IDADE: Idade
 TP_SEXO: Sexo
 TP_COR_RACA: Cor/raça

@@ -23,22 +23,34 @@ enem2017 <- enem2017[, atributos.selecionados]
 
 
 files.names <- paste("a", letters[seq(2, 26)], sep = "")
+files.names <- c(files.names, "ba")
 
-dataset.atributos.relevantes <- enem2017[ -linhasComNA(enem2017) ]
-#colnames(dataset.atributos.relevantes) <- atributos.selecionados
+dataset.atributos.relevantes <- enem2017[ -linhasComNA(enem2017), ]
+
+write.csv(dataset.atributos.relevantes, file = "partes-sem-na/aa", row.names = FALSE, col.names = TRUE, sep = ";")
+
 
 for(file.name in files.names) {
   cat("Lendo arquivo...", file.name, "\n")
   file <- read.csv(file.name, header = FALSE, sep = ";")
   cat("Terminou de ler o arquivo", file.name, "\n")
-  colnames(file) = colnames(enem2017)
+  
+  # Atribui o header ao dataset part
+  colnames(file) = atributos.dataset
   
   # Aplica o filtro de atributos selecionados
   file <- file[ , atributos.selecionados]
   
-  dataset.atributos.relevantes <- rbind(dataset.atributos.relevantes, file[ -linhasComNA(file) ])
+  linhasExcluidas <- linhasComNA(file);
+  file <- file[ -linhasExcluidas, ]
+  write.csv(file, file = paste("partes-sem-na/", file.name, sep = ""), row.names = FALSE, col.names = TRUE, sep = ";")
+  
+  dataset.atributos.relevantes <- rbind(dataset.atributos.relevantes, file)
   # dataset.atributos.relevantes <- rbind(dataset.atributos.relevantes, file)
 }
+
+# file <- read.csv("../base-enem-pre-processada.csv", header = TRUE, sep = ",")
+# dataset.atributos.relevantes <- file[ -linhasComNA(file), ]
 
 write.csv(dataset.atributos.relevantes, file = "base-enem-pre-processada.csv", row.names = FALSE, col.names = TRUE, sep = ";")
 
