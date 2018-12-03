@@ -154,12 +154,12 @@ rules.data <- c()
 
 # # 2a forma
 for( i in seq(1, ncol(data.train)) ) {
+  cat("Learning ", colnames(data.train)[i], "...\n")
   for( j in seq(1, nrow(data.train)) ) {
     retorno <- generateFuzzyRules( data.train[j , i],  fuzzy.regions[, i] )
     grausMaximosVariaveis[j, i] = as.numeric(retorno[1])
     regioesGrausMaximosVariaveis[j, i] = retorno[2]
   }
-  cat("")
 }
 
 # Determina o grau de cada regra e o armazena na coluna Degree.Rule do data.frame
