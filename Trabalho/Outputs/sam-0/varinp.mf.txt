@@ -1,6 +1,0 @@
-"small","medium","large","small","medium","large","small","medium","large","small","medium","large","small","medium","large","small","medium","large","small","medium","large","small","medium","large","small","medium","large","small","medium","large"
-5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5
-0,0.5,1,0,0.5,1,0,0.5,1,0,0.5,1,0,0.5,1,0,0.5,1,0,0.5,1,0,0.5,1,0,0.5,1,0,0.5,1
-0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175,0.175
-NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
-NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA
