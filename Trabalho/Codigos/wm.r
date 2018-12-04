@@ -1,14 +1,23 @@
 source('funcoesPertinenciaFuzzy.r')
 
-# Implementação do Wang&Mendel como descrito no artigo
+# Implementacao do Wang&Mendel como descrito no artigo
 
-# # Lê a base de dados
-# data <- read.csv('./GitHub/sistemasFuzzy/Codigos/jogarTenis.csv', sep = ',')
+## Le o dataset
+dataset <- read.csv("dados-sem-nominais.csv", header = TRUE, sep = ",")
 
-# # A coluna 1 é um identificador do dia
-# data <- data[, -1]
+# Remove os inscritos que nao informaram o tipo da escola que estudaram
+dataset <- dataset[ dataset$TP_ESCOLA != 1,  ]
 
-data <- iris
+## Divide o dataset
+data.train <- dataset[1 : ( nrow(dataset) * 2 / 3 ), ]
+data.tst <- dataset[ ( (nrow(dataset) * 2 / 3) + 1 ) :  nrow(dataset), -ncol(dataset) ]
+real.val <- dataset[ ( (nrow(dataset) * 2 / 3) + 1 ) :  nrow(dataset), ncol(dataset) ]
+
+## Define o intervalo dos dados
+range.data <- apply(data.train, 2, range)
+
+## data <- iris
+data <- data.train
 
 
 # regions <- c("Extremamente Baixa", "Baixissima", "Muito Baixa", "Baixa", "Um Pouco Baixa",
@@ -19,33 +28,27 @@ regions <- c("Extremamente.Baixa", "Baixissima", "Muito.Baixa", "Baixa",
              "Media",
              "Alta", "Muito.Alta", "Altissima", "Extremamente.Alta")
 
-nRegions <- 3
+ling.terms.NU_IDADE <- c("jovem", "adulto", "idoso")
+ling.terms.TP_SEXO <- c("masculino", "feminino")
+ling.terms.TP_COR_RACA <- c("branca", "parda", "preta")
+ling.terms.TP_ESCOLA <- c("publica", "privada", "exterior")
+ling.terms.Q006 <- c("baixa", "media", "alta")  ## Renda A = 0, B = ate 937, ...
+ling.terms.Q027 <- c("publica", "publica.e.privada", "privada")
+ling.terms.NU_NOTA_CN <- c("baixa", "media", "alta")
+ling.terms.NU_NOTA_CH <- c("baixa", "media", "alta")
+ling.terms.NU_NOTA_LC <- c("baixa", "media", "alta")
+ling.terms.NU_NOTA_MT <- c("baixa", "media", "alta")
+
+## Define o numero de termos linguisticos da variavel de saida NU_NOTA_REDACAO
+ling.terms.NU_NOTA_REDACAO <- c("baixa", "media", "alta")
+
+# nRegions <- 3
+nRegions <- c(3, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3)
 
 # idInicioRegioes <- (length(regions) - nRegions) / 2
 idInicioRegioes <- (length(regions) / 2) - 1
 
-# Fun��o para pre-processar a base de dados em questão
-preProcessar <- function(db) {
-  # Converte os dados em num�ricos
-  for(i in c(1: ncol(db))){
-    db[i] = as.numeric( unlist(db[i]) )
-  }
-  
-  return (db)
-}
-
-defineTrainSet <- function(db) {
-  # Coleta dados de forma aleatória para ser o conjunto de treinamento (1/3 da base)
-  return (db[ (1 : ( nrow(db) * 1 / 3 )), ])
-  
-}
-
-defineTestSet <- function(db) {
-  # Coleta dados de forma aleatória para ser o conjunto de teste (2/3 da base)
-  return(db[ (nrow(db) * 1 / 3) : ( nrow(db) ), ])
-}
-
-# Função para definir intervalos dos atributos da base de dados
+# Funcao para definir intervalos dos atributos da base de dados
 # TODO
 defineIntervalos <- function(db) {
   range <- c()
@@ -61,18 +64,26 @@ defineIntervalos <- function(db) {
 }
 
 
-# db é a base com os intervalos de cada variavel
+# db ?? a base com os intervalos de cada variavel
 defineRegioesFuzzy <- function(db, nRegions) {
   regions <- c()
-  nRows <- length( seq( min(db[ , 1]), max(db[ , 1]), (( (max(db[ , 1]) - min(db[ , 1]) ) / (nRegions - 1)) ) ) )
+  nRows <- length( seq( min(db[ , 1]), max(db[ , 1]), (( (max(db[ , 1]) - min(db[ , 1]) ) / (max(nRegions) - 1)) ) ) )
   for(i in c(1 : ncol(db))) {
     minimo <- min(db[ , i])
     maximo <- max(db[ , i])
     tamIntervalos <- ( max(db[ , i]) - min(db[ , i]) )
     if(minimo == maximo) {
-      regions <- c(regions, (rep(minimo, nRows)))
+      regions <- c(regions, (rep(minimo, nRegions[i])))
+      
+      # for(j in nRegions[i] : max(nRegions)) {
+        regions <- c(regions, rep("NA", max(nRegions) - nRegions[i]))
+      # }
     } else {
-      regions <- c( regions, seq( minimo, maximo, ( tamIntervalos / (nRegions - 1) ) ) )
+      regions <- c( regions, seq( minimo, maximo, ( tamIntervalos / (nRegions[i] - 1) ) ) )
+      
+      # for(j in nRegions[i] : max(nRegions)) {
+        regions <- c(regions, rep("NA", max(nRegions) - nRegions[i]))
+      # }
     }
     # cat("Regions of ", names(db)[i], ":", regions, "\n\n")
   }
@@ -82,59 +93,70 @@ defineRegioesFuzzy <- function(db, nRegions) {
 }
 # Continuar...
 # Fazer um metodo para iterar sobre todos os elementos do data.train
-# @param fuzzyRegionsXi - Regi~ões Fuzzy da variável Xi
+# @param fuzzyRegionsXi - Regi~??es Fuzzy da vari??vel Xi
 generateFuzzyRules <- function(elem, fuzzyRegionsXi) {
   result <- c()
+  regionsXi <- c()
+  for(i in 1:length(fuzzyRegionsXi)) {
+    if(!is.na(fuzzyRegionsXi[i])) {
+      regionsXi <- c(regionsXi, fuzzyRegionsXi[i])
+    }
+  }
+  fuzzyRegionsXi <- regionsXi
+  
   for( i in seq(1, length(fuzzyRegionsXi)) ) {
-    # cat("i = ", i, "\n")
-    if(i == 1) {
-      grau <- fuzzy_triangular(elem, fuzzyRegionsXi[i], fuzzyRegionsXi[i], fuzzyRegionsXi[i + 1])
-      result <- c( result, grau )
-    } else if( i == length(fuzzyRegionsXi) ) {
-      result <- c(result, fuzzy_triangular(elem, fuzzyRegionsXi[i - 1], fuzzyRegionsXi[i], fuzzyRegionsXi[i]))
-    } else {
-      result <- c(result, fuzzy_triangular(elem, fuzzyRegionsXi[i - 1], fuzzyRegionsXi[i], fuzzyRegionsXi[i + 1]))
+
+    if(!is.na(fuzzyRegionsXi)) {
+      if(i == 1) {
+        grau <- fuzzy_triangular(elem, fuzzyRegionsXi[i], fuzzyRegionsXi[i], fuzzyRegionsXi[i + 1])
+        result <- c( result, grau )
+      } else if( i == length(fuzzyRegionsXi) ) {
+        result <- c(result, fuzzy_triangular(elem, fuzzyRegionsXi[i - 1], fuzzyRegionsXi[i], fuzzyRegionsXi[i]))
+      } else {
+        result <- c(result, fuzzy_triangular(elem, fuzzyRegionsXi[i - 1], fuzzyRegionsXi[i], fuzzyRegionsXi[i + 1]))
+      }
     }
   }
   # cat("\n [", elem, "]", ": Result: ", result, "\n")
   
   # # 1a forma
-  # # Retorna o grau máximo de cada instancia do dataset
+  # # Retorna o grau m??ximo de cada instancia do dataset
   # return( max(result) )
   
   # 2a forma
-  # Retorna o grau máximo e a região correspondente a este grau.
+  # Retorna o grau maximo e a regiao correspondente a este grau.
   # return( c(max(result), regions[idInicioRegioes + which(result == max(result))[1]]) )
-  return( c(max(result), regions[ idInicioRegioes + which( result == max(result) )[1] ]) )
+  return( c(max(result), regions[ which( result == max(result) )[1] ]) )
 }
 
-# Chamada de funções
+# Chamada de funcoes
 data <- preProcessar(data)
 data.test <- defineTestSet(data)
 data.train <- defineTrainSet(data)
-intervalos <- defineIntervalos(data.train)
-fuzzyRegions <- defineRegioesFuzzy(intervalos, nRegions)
+fuzzy.intervals <- defineIntervalos(data.train)
+fuzzy.regions <- defineRegioesFuzzy(fuzzy.intervals, nRegions)
 
-# Define a matriz que contém os graus de todas as intâncias das variáveis
+# Define a matriz que cont??m os graus de todas as int??ncias das vari??veis
 grausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train) + 1) )
 colnames(grausMaximosVariaveis) = c(names(data), "Degree.Rule")
 
-# Define uma matriz com as regiões correspondente a cada grau máximo obtido por cada elemento do dataset
+# Define uma matriz com as regi??es correspondente a cada grau m??ximo obtido por cada elemento do dataset
 regioesGrausMaximosVariaveis = data.frame( matrix(nrow = nrow(data.train), ncol = ncol(data.train)) )
 colnames(regioesGrausMaximosVariaveis) = names(data)
 
 # Define a base de regras
 rules.data <- c()
 
-# # 1a forma: Função Inicial usando lapply
+# # 1a forma: Fun????o Inicial usando lapply
 # for(i in seq(1, ncol(data.train)) ) {
   # grausMaximosVariaveis[ ,i] = unlist(lapply(data.train[ , i], generateFuzzyRules, fuzzyRegions[, i]))
 # }
 
 # # 2a forma
 for( i in seq(1, ncol(data.train)) ) {
+  cat("Learning ", colnames(data.train)[i], "...\n")
   for( j in seq(1, nrow(data.train)) ) {
-    retorno <- generateFuzzyRules( data.train[j , i],  fuzzyRegions[, i] )
+    retorno <- generateFuzzyRules( data.train[j , i],  fuzzy.regions[, i] )
     grausMaximosVariaveis[j, i] = as.numeric(retorno[1])
     regioesGrausMaximosVariaveis[j, i] = retorno[2]
   }
