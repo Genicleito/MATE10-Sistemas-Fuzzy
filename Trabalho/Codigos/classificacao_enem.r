@@ -33,7 +33,6 @@ data.range <- apply(enem_2017.train, 2, range)
 idade.label <- c("crianca", "adolescente", "adulto", "meia idade", "idoso")
 sexo.label <- c("feminino", "masculino")
 cor_raca.label <- c("branca", "preta", "parda", "amarela", "indigena")
-escola.label <- c("publica", "privada", "exterior")
 q006.label <- c("sem renda",
                 "ate 937,00",
                 "de 937,01 ate 1.045,50",
@@ -56,16 +55,15 @@ q027.label <- c("somente em escola publica",
                 "parte em escola publica e parte em escola privada com bolsa de estudo integral",
                 "somente em escola privada SEM bolsa de estudo integral",
                 "somente em escola privada COM bolsa de estudo integral")
-nota_cn.label <- c("A+", "A", "A−", "B+", "B", "B−", "C+", "C", "C−", "D+", "D", "D−", "F")
-nota_ch.label <- c("A+", "A", "A−", "B+", "B", "B−", "C+", "C", "C−", "D+", "D", "D−", "F")
-nota_lc.label <- c("A+", "A", "A−", "B+", "B", "B−", "C+", "C", "C−", "D+", "D", "D−", "F")
-nota_mt.label <- c("A+", "A", "A−", "B+", "B", "B−", "C+", "C", "C−", "D+", "D", "D−", "F")
-nota_redacao.label <- c("A+", "A", "A−", "B+", "B", "B−", "C+", "C", "C−", "D+", "D", "D−", "F")
+nota_cn.label <- c("A", "B", "C", "D", "E", "F")
+nota_ch.label <- c("A", "B", "C", "D", "E", "F")
+nota_lc.label <- c("A", "B", "C", "D", "E", "F")
+nota_mt.label <- c("A", "B", "C", "D", "E", "F")
+nota_redacao.label <- c("A", "B", "C", "D", "E", "F")
 
 idade.range <- c(1, 100)
 sexo.range <- c(1, 2)
 cor_raca.range <- c(1, 5)
-escola.range <- c(2, 4)
 q006.range <- c(1, 17)
 q027.range <- c(1,5)
 nota_cn.range <- c(0, 1000)
@@ -78,32 +76,94 @@ nota_redacao.range <- c(0, 1000)
 range.data <- matrix(c(idade.range,
                        sexo.range,
                        cor_raca.range,
-                       escola.range,
                        q006.range,
                        q027.range,
                        nota_cn.range,
                        nota_ch.range,
                        nota_lc.range,
                        nota_mt.range), nrow = 2)
-num.fvalinput <- matrix(c(5, 2, 5, 3, 17, 5, 13, 13, 13, 13), nrow = 1)
+num.fvalinput <- matrix(c(5, 2, 5, 17, 5, 6, 6, 6, 6), nrow = 1)
 names.varinput <- c(idade.label,
                     sexo.label,
                     cor_raca.label,
-                    escola.label,
                     q006.label,
                     q027.label,
                     nota_cn.label,
                     nota_ch.label,
                     nota_lc.label,
                     nota_mt.label)
-num.fvaloutput <- matrix(13, nrow = 1)
-varout.mf <-c() # somente para mandani, buscar com wang-mendel
+num.fvaloutput <- matrix(6 , nrow = 1)
+varout.mf <- matrix(c(2,0,0,400,500,
+                      1,400,500,600,NA,
+                      1,500,600,700,NA,
+                      1,600,700,800,NA,
+                      1,700,800,900,NA,
+                      1,850,1000,1000,NA), nrow = 5, byrow = FALSE)
 names.varoutput <- c(nota_redacao.label)
+rule <- # Regras de WM
+varinp.mf <- matrix(c(2,0,0,10,15,
+                      1,12,16,21,NA,
+                      4,18,25,60,65,
+                      3,60,65,100,100,
+                      1,1,1,2,NA,
+                      1,1,2,2,NA,
+                      1,1,1,2,NA,
+                      1,1,2,3,NA,
+                      1,2,3,4,NA,
+                      1,3,4,5,NA,
+                      1,4,5,5,NA,
+                      1,1,1,2,NA,
+                      1,1,2,3,NA,
+                      1,2,3,4,NA,
+                      1,3,4,5,NA,
+                      1,4,5,6,NA,
+                      1,5,6,7,NA,
+                      1,6,7,8,NA,
+                      1,7,8,9,NA,
+                      1,8,9,10,NA,
+                      1,9,10,11,NA,
+                      1,10,11,12,NA,
+                      1,11,12,13,NA,
+                      1,12,13,14,NA,
+                      1,13,14,15,NA,
+                      1,14,15,16,NA,
+                      1,15,16,17,NA,
+                      1,16,17,17,NA,
+                      1,1,1,2,NA,
+                      1,1,2,3,NA,
+                      1,2,3,4,NA,
+                      1,3,4,5,NA,
+                      1,4,5,5,NA,
+                      2,0,0,400,500,
+                      1,400,500,600,NA,
+                      1,500,600,700,NA,
+                      1,600,700,800,NA,
+                      1,700,800,900,NA,
+                      1,850,1000,1000,NA,
+                      2,0,0,400,500,
+                      1,400,500,600,NA,
+                      1,500,600,700,NA,
+                      1,600,700,800,NA,
+                      1,700,800,900,NA,
+                      1,850,1000,1000,NA,
+                      2,0,0,400,500,
+                      1,400,500,600,NA,
+                      1,500,600,700,NA,
+                      1,600,700,800,NA,
+                      1,700,800,900,NA,
+                      1,850,1000,1000,NA,
+                      2,0,0,400,500,
+                      1,400,500,600,NA,
+                      1,500,600,700,NA,
+                      1,600,700,800,NA,
+                      1,700,800,900,NA,
+                      1,850,1000,1000,NA), nrow = 5, byrow = FALSE)
 type.model <- "MAMDANI"
 type.defuz <- "WAM"
 type.tnorm <- "MIN"
 type.snorm <- "MAX"
-func.tsk <- 
-colnames.var <-
-  type.implication.func <- 
+func.tsk <- # UTILIZADO SOMENTE PARA MODELOS TAKAGI-SUGENO
+colnames.var <- c("idade", "cor", "sexo", "renda familiar", "ensino medio", "ciencias naturais",
+                  "ciencias humanas", "linguagens e codigos", "matematica", "redacao")
 type.implication.func <- "LUKASIEWICZ"
+name <- "Sim-0"
