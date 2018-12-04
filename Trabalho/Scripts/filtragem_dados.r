@@ -15,9 +15,8 @@ MICRODADOS_ENEM_2017_FULL <- MICRODADOS_ENEM_2017_FULL %>% filter(TP_PRESENCA_CH
                                                         TP_STATUS_REDACAO != 4 &
                                                         IN_TREINEIRO != 1)
 
-atributos.selecionados <- c("NU_IDADE", "TP_SEXO", "TP_COR_RACA", "TP_ESCOLA",
-                            "Q006", "Q027", "NU_NOTA_CN", "NU_NOTA_CH", "NU_NOTA_LC", "NU_NOTA_MT",
-                            "NU_NOTA_REDACAO")
+atributos.selecionados <- c("NU_IDADE", "TP_SEXO", "TP_COR_RACA", "Q006", "Q027", 
+                            "NU_NOTA_CN", "NU_NOTA_CH", "NU_NOTA_LC", "NU_NOTA_MT", "NU_NOTA_REDACAO")
 
 MICRODADOS_ENEM_2017_FULL <- MICRODADOS_ENEM_2017_FULL[, atributos.selecionados]
 
