@@ -23,12 +23,6 @@ enem_2017.label <- enem_2017[1:test.rows, ncol(enem_2017)]
 enem_2017.train <- enem_2017[(test.rows+1):nrow(enem_2017), ]
 
 #################################
-# Geracao do modelo utilizando learn
-
-data.range <- apply(enem_2017.train, 2, range)
-
-
-#################################
 # Geracao do modelo atraves do fbrs.gen
 idade.label <- c("crianca", "adolescente", "adulto", "meia idade", "idoso")
 sexo.label <- c("feminino", "masculino")
@@ -100,7 +94,32 @@ varout.mf <- matrix(c(2,0,0,400,500,
                       1,700,800,900,NA,
                       1,850,1000,1000,NA), nrow = 5, byrow = FALSE)
 names.varoutput <- c(nota_redacao.label)
-rule <- # Regras de WM
+rule <- matrix(c("masculino","and","parda","and","de R$14.055,01 ate R$18.740,00","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","C","and","C","and","C","and","E","->","D",
+                 "masculino","and","parda","and","mais de R$ 18.740,00","and","somente em escola privada SEM bolsa de estudo integral","and","E","and","B","and","B","and","C","->","A",
+                 "masculino","and","parda","and","mais de R$ 18.740,00","and","somente em escola privada SEM bolsa de estudo integral","and","A","and","B","and","A","and","A","->","A",
+                 "masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
+                 "masculino","and","parda","and","de R$3.748,01 ate R$4.685,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","E","->","E",
+                 "masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","C","->","D",
+                 "masculino","and","parda","and","de R$5.622,01 ate R$6.559,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","D","->","D",
+                 "masculino","and","preta","and","de R$1.405,51 ate R$1.874,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","C","->","D",
+                 "masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada COM bolsa de estudo integral","and","B","and","B","and","B","and","C","->","A",
+                 "masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","E","and","D","and","C","and","D","->","D",
+                 "masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","D","and","C","and","C","and","D","->","C",
+                 "masculino","and","amarela","and","de R$4.685,01 ate R$5.622,00","and","somente em escola privada COM bolsa de estudo integral","and","C","and","C","and","B","and","C","->","C",
+                 "masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","somente em escola privada SEM bolsa de estudo integral","and","D","and","E","and","E","and","E","->","D",
+                 "masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","somente em escola privada COM bolsa de estudo integral","and","C","and","C","and","C","and","E","->","D",
+                 "masculino","and","parda","and","de 937,01 ate 1.045,50","and","somente em escola privada SEM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
+                 "masculino","and","preta","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","E","and","C","and","B","and","C","->","C",
+                 "masculino","and","parda","and","de R$5.622,01 ate R$6.559,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","D","->","C",
+                 "masculino","and","preta","and","mais de R$ 18.740,00","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","B","and","C","and","B","and","A","->","C",
+                 "masculino","and","parda","and","ate 937,00","and","somente em escola privada COM bolsa de estudo integral","and","C","and","B","and","B","and","C","->","A",
+                 "masculino","and","preta","and","de 937,01 ate 1.045,50","and","somente em escola privada COM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
+                 "masculino","and","preta","and","de R$1.405,51 ate R$1.874,00","and","somente em escola privada COM bolsa de estudo integral","and","B","and","C","and","C","and","B","->","B",
+                 "masculino","and","parda","and","ate 937,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","E","->","D",
+                 "masculino","and","parda","and","de R$9.370,01 ate R$11.244,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","B","and","B","and","B","->","C",
+                 "masculino","and","parda","and","de R$4.685,01 ate R$5.622,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","C","->","E",
+                 "masculino","and","preta","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","C","and","E","and","C","and","E","->","E"),
+               nrow = 25, byrow = TRUE)
 varinp.mf <- matrix(c(2,0,0,10,15,
                       1,12,16,21,NA,
                       4,18,25,60,65,
@@ -162,8 +181,13 @@ type.model <- "MAMDANI"
 type.defuz <- "WAM"
 type.tnorm <- "MIN"
 type.snorm <- "MAX"
-func.tsk <- # UTILIZADO SOMENTE PARA MODELOS TAKAGI-SUGENO
-colnames.var <- c("idade", "cor", "sexo", "renda familiar", "ensino medio", "ciencias naturais",
+func.tsk <- NULL
+colnames.var <- c("idade", "sexo", "cor", "renda familiar", "ensino medio", "ciencias naturais",
                   "ciencias humanas", "linguagens e codigos", "matematica", "redacao")
 type.implication.func <- "LUKASIEWICZ"
 name <- "Sim-0"
+
+object <- frbs.gen(range.data, num.fvalinput, names.varinput,
+                   num.fvaloutput, varout.mf, names.varoutput, rule,
+                   varinp.mf, type.model, type.defuz, type.tnorm,
+                   type.snorm, func.tsk = NULL, colnames.var, type.implication.func, name)
