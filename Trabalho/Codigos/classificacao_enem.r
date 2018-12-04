@@ -12,7 +12,12 @@ library(frbs)
 # CARREGAMENTO DOS DADOS
 
 # Assumindo que a diretorio do trabalho é a base do git
-enem_2017 <- read_csv("Datasets/MICRODADOS_ENEM_2017.csv")
+enem_2017 <- read_csv("Datasets/base-enemBA-pre-processada.csv")
+enem_2017$TP_ESCOLA <- NULL
+
+enem_2017$TP_SEXO = as.numeric( unlist( as.factor(enem_2017$TP_SEXO)))
+enem_2017$Q006 = as.numeric(unlist( as.factor(enem_2017$Q006)))
+enem_2017$Q027 = as.numeric(unlist( as.factor(enem_2017$Q027)))
 
 test.split <- 0.3
 
@@ -24,7 +29,7 @@ enem_2017.train <- enem_2017[(test.rows+1):nrow(enem_2017), ]
 
 #################################
 # Geracao do modelo atraves do fbrs.gen
-idade.label <- c("crianca", "adolescente", "adulto", "meia idade", "idoso")
+idade.label <- c("crianca", "adolescente", "adulto", "idoso")
 sexo.label <- c("feminino", "masculino")
 cor_raca.label <- c("branca", "preta", "parda", "amarela", "indigena")
 q006.label <- c("sem renda",
@@ -75,8 +80,9 @@ range.data <- matrix(c(idade.range,
                        nota_cn.range,
                        nota_ch.range,
                        nota_lc.range,
-                       nota_mt.range), nrow = 2)
-num.fvalinput <- matrix(c(5, 2, 5, 17, 5, 6, 6, 6, 6), nrow = 1)
+                       nota_mt.range,
+                       nota_redacao.range), nrow = 2)
+num.fvalinput <- matrix(c(4, 2, 5, 17, 5, 6, 6, 6, 6), nrow = 1)
 names.varinput <- c(idade.label,
                     sexo.label,
                     cor_raca.label,
@@ -86,7 +92,7 @@ names.varinput <- c(idade.label,
                     nota_ch.label,
                     nota_lc.label,
                     nota_mt.label)
-num.fvaloutput <- matrix(6 , nrow = 1)
+num.fvaloutput <- matrix(c(6) , nrow = 1)
 varout.mf <- matrix(c(2,0,0,400,500,
                       1,400,500,600,NA,
                       1,500,600,700,NA,
@@ -94,31 +100,31 @@ varout.mf <- matrix(c(2,0,0,400,500,
                       1,700,800,900,NA,
                       1,850,1000,1000,NA), nrow = 5, byrow = FALSE)
 names.varoutput <- c(nota_redacao.label)
-rule <- matrix(c("masculino","and","parda","and","de R$14.055,01 ate R$18.740,00","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","C","and","C","and","C","and","E","->","D",
-                 "masculino","and","parda","and","mais de R$ 18.740,00","and","somente em escola privada SEM bolsa de estudo integral","and","E","and","B","and","B","and","C","->","A",
-                 "masculino","and","parda","and","mais de R$ 18.740,00","and","somente em escola privada SEM bolsa de estudo integral","and","A","and","B","and","A","and","A","->","A",
-                 "masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
-                 "masculino","and","parda","and","de R$3.748,01 ate R$4.685,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","E","->","E",
-                 "masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","C","->","D",
-                 "masculino","and","parda","and","de R$5.622,01 ate R$6.559,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","D","->","D",
-                 "masculino","and","preta","and","de R$1.405,51 ate R$1.874,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","C","->","D",
-                 "masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada COM bolsa de estudo integral","and","B","and","B","and","B","and","C","->","A",
-                 "masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","E","and","D","and","C","and","D","->","D",
-                 "masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","D","and","C","and","C","and","D","->","C",
-                 "masculino","and","amarela","and","de R$4.685,01 ate R$5.622,00","and","somente em escola privada COM bolsa de estudo integral","and","C","and","C","and","B","and","C","->","C",
-                 "masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","somente em escola privada SEM bolsa de estudo integral","and","D","and","E","and","E","and","E","->","D",
-                 "masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","somente em escola privada COM bolsa de estudo integral","and","C","and","C","and","C","and","E","->","D",
-                 "masculino","and","parda","and","de 937,01 ate 1.045,50","and","somente em escola privada SEM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
-                 "masculino","and","preta","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","E","and","C","and","B","and","C","->","C",
-                 "masculino","and","parda","and","de R$5.622,01 ate R$6.559,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","D","->","C",
-                 "masculino","and","preta","and","mais de R$ 18.740,00","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","B","and","C","and","B","and","A","->","C",
-                 "masculino","and","parda","and","ate 937,00","and","somente em escola privada COM bolsa de estudo integral","and","C","and","B","and","B","and","C","->","A",
-                 "masculino","and","preta","and","de 937,01 ate 1.045,50","and","somente em escola privada COM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
-                 "masculino","and","preta","and","de R$1.405,51 ate R$1.874,00","and","somente em escola privada COM bolsa de estudo integral","and","B","and","C","and","C","and","B","->","B",
-                 "masculino","and","parda","and","ate 937,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","E","->","D",
-                 "masculino","and","parda","and","de R$9.370,01 ate R$11.244,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","B","and","B","and","B","->","C",
-                 "masculino","and","parda","and","de R$4.685,01 ate R$5.622,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","C","->","E",
-                 "masculino","and","preta","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","C","and","E","and","C","and","E","->","E"),
+rule <- matrix(c("adolescente","and","masculino","and","parda","and","de R$14.055,01 ate R$18.740,00","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","C","and","C","and","C","and","E","->","D",
+                 "adolescente","and","masculino","and","parda","and","mais de R$ 18.740,00","and","somente em escola privada SEM bolsa de estudo integral","and","E","and","B","and","B","and","C","->","A",
+                 "adolescente","and","masculino","and","parda","and","mais de R$ 18.740,00","and","somente em escola privada SEM bolsa de estudo integral","and","A","and","B","and","A","and","A","->","A",
+                 "adolescente","and","masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
+                 "adolescente","and","masculino","and","parda","and","de R$3.748,01 ate R$4.685,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","E","->","E",
+                 "adolescente","and","masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","C","->","D",
+                 "adolescente","and","masculino","and","parda","and","de R$5.622,01 ate R$6.559,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","D","->","D",
+                 "adolescente","and","masculino","and","preta","and","de R$1.405,51 ate R$1.874,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","C","->","D",
+                 "adolescente","and","masculino","and","parda","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada COM bolsa de estudo integral","and","B","and","B","and","B","and","C","->","A",
+                 "adolescente","and","masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","E","and","D","and","C","and","D","->","D",
+                 "adolescente","and","masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","D","and","C","and","C","and","D","->","C",
+                 "adolescente","and","masculino","and","amarela","and","de R$4.685,01 ate R$5.622,00","and","somente em escola privada COM bolsa de estudo integral","and","C","and","C","and","B","and","C","->","C",
+                 "adolescente","and","masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","somente em escola privada SEM bolsa de estudo integral","and","D","and","E","and","E","and","E","->","D",
+                 "adolescente","and","masculino","and","parda","and","de R$1.874,01 ate R$2.342,50","and","somente em escola privada COM bolsa de estudo integral","and","C","and","C","and","C","and","E","->","D",
+                 "adolescente","and","masculino","and","parda","and","de 937,01 ate 1.045,50","and","somente em escola privada SEM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
+                 "adolescente","and","masculino","and","preta","and","de R$2.342,51 ate R$2.811,00","and","somente em escola privada SEM bolsa de estudo integral","and","E","and","C","and","B","and","C","->","C",
+                 "adolescente","and","masculino","and","parda","and","de R$5.622,01 ate R$6.559,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","D","->","C",
+                 "adolescente","and","masculino","and","preta","and","mais de R$ 18.740,00","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","B","and","C","and","B","and","A","->","C",
+                 "adolescente","and","masculino","and","parda","and","ate 937,00","and","somente em escola privada COM bolsa de estudo integral","and","C","and","B","and","B","and","C","->","A",
+                 "adolescente","and","masculino","and","preta","and","de 937,01 ate 1.045,50","and","somente em escola privada COM bolsa de estudo integral","and","B","and","B","and","B","and","B","->","A",
+                 "adolescente","and","masculino","and","preta","and","de R$1.405,51 ate R$1.874,00","and","somente em escola privada COM bolsa de estudo integral","and","B","and","C","and","C","and","B","->","B",
+                 "adolescente","and","masculino","and","parda","and","ate 937,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","B","and","E","->","D",
+                 "adolescente","and","masculino","and","parda","and","de R$9.370,01 ate R$11.244,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","B","and","B","and","B","->","C",
+                 "adolescente","and","masculino","and","parda","and","de R$4.685,01 ate R$5.622,00","and","somente em escola privada SEM bolsa de estudo integral","and","C","and","C","and","C","and","C","->","E",
+                 "adolescente","and","masculino","and","preta","and","de R$1.874,01 ate R$2.342,50","and","parte em escola publica e parte em escola privada sem bolsa de estudo integral","and","C","and","E","and","C","and","E","->","E"),
                nrow = 25, byrow = TRUE)
 varinp.mf <- matrix(c(2,0,0,10,15,
                       1,12,16,21,NA,
@@ -191,3 +197,12 @@ object <- frbs.gen(range.data, num.fvalinput, names.varinput,
                    num.fvaloutput, varout.mf, names.varoutput, rule,
                    varinp.mf, type.model, type.defuz, type.tnorm,
                    type.snorm, func.tsk = NULL, colnames.var, type.implication.func, name)
+
+plotMF(object)
+
+newdata <- matrix(c(17, 2, 3,16, 2, 540.7, 583.0, 472.9,405.1,
+                    31, 1, 2,17, 1, 396.4, 401.6, 350.7,494.2,
+                    17, 1, 3, 6, 1, 452.8, 451.3, 529.1,439.1,
+                    18, 1, 2, 4, 1, 496.0, 484.3, 515.7,531.8), nrow = 4, byrow = TRUE)
+
+res <- predict(object, enem_2017.test)$predicted.val
